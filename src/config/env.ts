@@ -6,6 +6,7 @@ function required(key: string): string {
 
 export const env = {
   JWT_SECRET: required('JWT_SECRET'),
+  DATABASE_URL: required('DATABASE_URL'),
   REZEL_AUTH_URL: required('REZEL_AUTH_URL'),
   REZEL_TOKEN_URL: required('REZEL_TOKEN_URL'),
   REZEL_USERINFO_URL: required('REZEL_USERINFO_URL'),
