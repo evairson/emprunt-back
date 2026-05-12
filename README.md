@@ -21,6 +21,20 @@ $ npm run start:dev
 $ npm run start:prod
 ```
 
+## Create database
+
+We recommend using Docker to create the database. You can run the following command to create a PostgreSQL database:
+
+```bash
+$ docker run --name bds-postgres \
+  -e POSTGRES_PASSWORD=YOUR_PASSWORD \
+  -e POSTGRES_DB=emprunt \
+  -p 5432:5432 \
+  -d postgres
+```
+
+Don't forget to update the `DATABASE_URL` in the `.env` file with the correct credentials and host information.
+
 ## Run tests
 
 ```bash

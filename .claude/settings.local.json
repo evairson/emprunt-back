@@ -4,7 +4,9 @@
       "Bash(npm install *)",
       "Bash(npm run *)",
       "Bash(git -C /Users/evaherson/Documents/telecom-repo/bds/emprunt-back log --oneline)",
-      "Bash(git -C /Users/evaherson/Documents/telecom-repo/bds/emprunt-back diff HEAD~1 HEAD --stat)"
+      "Bash(git -C /Users/evaherson/Documents/telecom-repo/bds/emprunt-back diff HEAD~1 HEAD --stat)",
+      "Bash(docker exec *)",
+      "Bash(psql \"postgresql://postgres:postgres@localhost:5432/emprunt\" -c \"\\\\conninfo\")"
     ]
   }
 }
