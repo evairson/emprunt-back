@@ -28,6 +28,7 @@ export class AuthService {
       id: profile.sub,
       email: profile.email,
       username: profile.preferred_username,
+      name: profile.name,
     });
 
     return {
@@ -35,6 +36,7 @@ export class AuthService {
         sub: profile.sub,
         email: profile.email,
         username: profile.preferred_username,
+        name: profile.name,
       }),
     };
   }

@@ -6,6 +6,7 @@ export class FindOrCreateUserDto {
   id!: string;
   email!: string;
   username!: string;
+  name!: string;
 }
 
 @Injectable()
