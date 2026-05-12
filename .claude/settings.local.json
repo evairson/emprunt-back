@@ -2,7 +2,9 @@
   "permissions": {
     "allow": [
       "Bash(npm install *)",
-      "Bash(npm run *)"
+      "Bash(npm run *)",
+      "Bash(git -C /Users/evaherson/Documents/telecom-repo/bds/emprunt-back log --oneline)",
+      "Bash(git -C /Users/evaherson/Documents/telecom-repo/bds/emprunt-back diff HEAD~1 HEAD --stat)"
     ]
   }
 }
