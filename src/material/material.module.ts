@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
 
 import { env } from '../config/env';
+import { AdminGuard } from '../auth/admin.guard';
 import { JwtAuthGuard } from '../auth/jwt-auth.guard';
 import { MaterialController } from './material.controller';
 import { MaterialService } from './material.service';
@@ -14,6 +15,6 @@ import { MaterialService } from './material.service';
     }),
   ],
   controllers: [MaterialController],
-  providers: [MaterialService, JwtAuthGuard],
+  providers: [MaterialService, JwtAuthGuard, AdminGuard],
 })
 export class MaterialModule {}
