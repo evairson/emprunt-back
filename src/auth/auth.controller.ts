@@ -1,6 +1,8 @@
-import { Controller, Get, Query, Res } from '@nestjs/common';
-import { ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
-import type { Response } from 'express';
+import { Controller, Get, Query, Req, Res, UseGuards } from '@nestjs/common';
+import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
+import type { Request, Response } from 'express';
+
+import { JwtAuthGuard } from './jwt-auth.guard';
 
 import { AuthService } from './auth.service';
 import { LoginUrlDto } from './dto/auth-response.dto';
@@ -34,5 +36,12 @@ export class AuthController {
     });
 
     res.redirect(`${process.env.FRONTEND_URL ?? 'http://localhost:3001'}/dashboard`);
+  }
+
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  me(@Req() req: Request) {
+    return this.authService.getMe(req['user'].sub as string);
   }
 }
