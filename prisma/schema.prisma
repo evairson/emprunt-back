@@ -16,6 +16,12 @@ enum Role {
   ADMIN
 }
 
+enum EmpruntStatus {
+  PENDING
+  APPROVED
+  REJECTED
+}
+
 model User {
   id       String  @id
   email    String  @unique
@@ -34,11 +40,13 @@ model Material {
 }
 
 model Emprunt {
-  id         String    @id @default(cuid())
+  id         String        @id @default(cuid())
   userId     String
   materialId String
-  borrowedAt DateTime  @default(now())
-  returnedAt DateTime?
-  user       User      @relation(fields: [userId], references: [id])
-  material   Material  @relation(fields: [materialId], references: [id])
+  startDate  DateTime
+  endDate    DateTime
+  status     EmpruntStatus @default(PENDING)
+  createdAt  DateTime      @default(now())
+  user       User          @relation(fields: [userId], references: [id])
+  material   Material      @relation(fields: [materialId], references: [id])
 }
