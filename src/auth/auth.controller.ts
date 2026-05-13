@@ -15,6 +15,15 @@ import { JwtAuthGuard } from './jwt-auth.guard';
 import { AuthService } from './auth.service';
 import { LoginUrlDto } from './dto/auth-response.dto';
 
+const isProd = process.env.NODE_ENV === 'production';
+const cookieOptions = {
+  httpOnly: true,
+  secure: isProd,
+  sameSite: isProd ? ('none' as const) : ('lax' as const),
+  domain: process.env.COOKIE_DOMAIN,
+  maxAge: 60 * 60 * 1000,
+};
+
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
@@ -36,19 +45,14 @@ export class AuthController {
   ): Promise<void> {
     const { access_token } = await this.authService.handleCallback(code, state);
 
-    res.cookie('token', access_token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'lax',
-      maxAge: 60 * 60 * 1000,
-    });
+    res.cookie('token', access_token, cookieOptions);
 
     res.redirect(process.env.FRONTEND_URL ?? 'http://localhost:3001');
   }
 
   @Post('logout')
   logout(@Res({ passthrough: true }) res: Response) {
-    res.clearCookie('token');
+    res.clearCookie('token', { domain: cookieOptions.domain });
     return { ok: true };
   }
 
