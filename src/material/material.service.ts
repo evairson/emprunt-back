@@ -45,4 +45,14 @@ export class MaterialService {
 
     return this.prisma.client.material.delete({ where: { id } });
   }
+
+  async setPhoto(id: string, filename: string) {
+    const material = await this.prisma.client.material.findUnique({ where: { id } });
+    if (!material) throw new NotFoundException('Material not found');
+
+    return this.prisma.client.material.update({
+      where: { id },
+      data: { photoUrl: `/uploads/${filename}` },
+    });
+  }
 }
