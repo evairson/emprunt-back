@@ -46,6 +46,7 @@ model Emprunt {
   startDate  DateTime
   endDate    DateTime
   status     EmpruntStatus @default(PENDING)
+  returnedAt DateTime?
   createdAt  DateTime      @default(now())
   user       User          @relation(fields: [userId], references: [id])
   material   Material      @relation(fields: [materialId], references: [id])

@@ -49,4 +49,10 @@ export class EmpruntController {
   reject(@Param('id') id: string) {
     return this.empruntService.setStatus(id, 'REJECTED');
   }
+
+  @Patch(':id/return')
+  @UseGuards(AdminGuard)
+  markReturned(@Param('id') id: string) {
+    return this.empruntService.markReturned(id);
+  }
 }

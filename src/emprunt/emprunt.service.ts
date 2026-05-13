@@ -55,4 +55,20 @@ export class EmpruntService {
 
     return this.prisma.client.emprunt.update({ where: { id }, data: { status } });
   }
+
+  async markReturned(id: string) {
+    const emprunt = await this.prisma.client.emprunt.findUnique({ where: { id } });
+    if (!emprunt) throw new NotFoundException('Emprunt not found');
+    if (emprunt.status !== 'APPROVED') {
+      throw new BadRequestException('Emprunt is not approved');
+    }
+    if (emprunt.returnedAt) {
+      throw new BadRequestException('Emprunt already returned');
+    }
+
+    return this.prisma.client.emprunt.update({
+      where: { id },
+      data: { returnedAt: new Date() },
+    });
+  }
 }
