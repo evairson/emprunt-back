@@ -1,6 +1,14 @@
-import { Controller, Get, Query, Req, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Query,
+  Req,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
-import type { Request, Response } from 'express';
+import { Request, Response } from 'express';
 
 import { JwtAuthGuard } from './jwt-auth.guard';
 
@@ -35,7 +43,13 @@ export class AuthController {
       maxAge: 60 * 60 * 1000,
     });
 
-    res.redirect(`${process.env.FRONTEND_URL ?? 'http://localhost:3001'}/dashboard`);
+    res.redirect(process.env.FRONTEND_URL ?? 'http://localhost:3001');
+  }
+
+  @Post('logout')
+  logout(@Res({ passthrough: true }) res: Response) {
+    res.clearCookie('token');
+    return { ok: true };
   }
 
   @Get('me')
