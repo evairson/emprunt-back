@@ -32,6 +32,11 @@ export class EmpruntController {
     return this.empruntService.findMine(req['user'].sub as string);
   }
 
+  @Get('blocked/:materialId')
+  blockedDates(@Param('materialId') materialId: string) {
+    return this.empruntService.getBlockedDates(materialId);
+  }
+
   @Get()
   @UseGuards(AdminGuard)
   findAll() {

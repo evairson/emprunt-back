@@ -28,8 +28,37 @@ export class EmpruntService {
     });
     if (!material) throw new NotFoundException('Material not found');
 
+    const overlap = await this.prisma.client.emprunt.findFirst({
+      where: {
+        materialId: dto.materialId,
+        status: 'APPROVED',
+        returnedAt: null,
+        startDate: { lt: end },
+        endDate: { gt: start },
+      },
+      orderBy: { endDate: 'asc' },
+    });
+    if (overlap) {
+      throw new BadRequestException(
+        `Material unavailable until ${overlap.endDate.toISOString()}`,
+      );
+    }
+
     return this.prisma.client.emprunt.create({
       data: { userId, materialId: dto.materialId, startDate: start, endDate: end },
+    });
+  }
+
+  getBlockedDates(materialId: string) {
+    return this.prisma.client.emprunt.findMany({
+      where: {
+        materialId,
+        status: 'APPROVED',
+        returnedAt: null,
+        endDate: { gte: new Date() },
+      },
+      select: { startDate: true, endDate: true },
+      orderBy: { startDate: 'asc' },
     });
   }
 
