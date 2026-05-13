@@ -3,7 +3,9 @@ import {
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
+import { MailService } from '../mail/mail.service';
 import { PrismaService } from '../prisma/prisma.service';
 
 export class CreateEmpruntDto {
@@ -14,7 +16,10 @@ export class CreateEmpruntDto {
 
 @Injectable()
 export class EmpruntService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly mail: MailService,
+  ) {}
 
   async create(userId: string, dto: CreateEmpruntDto) {
     const start = new Date(dto.startDate);
@@ -76,13 +81,61 @@ export class EmpruntService {
   }
 
   async setStatus(id: string, status: 'APPROVED' | 'REJECTED') {
-    const emprunt = await this.prisma.client.emprunt.findUnique({ where: { id } });
+    const emprunt = await this.prisma.client.emprunt.findUnique({
+      where: { id },
+      include: { user: true, material: true },
+    });
     if (!emprunt) throw new NotFoundException('Emprunt not found');
     if (emprunt.status !== 'PENDING') {
       throw new BadRequestException('Emprunt already processed');
     }
 
-    return this.prisma.client.emprunt.update({ where: { id }, data: { status } });
+    const updated = await this.prisma.client.emprunt.update({
+      where: { id },
+      data: { status },
+    });
+
+    if (status === 'APPROVED') {
+      const due = emprunt.endDate.toLocaleDateString('fr-FR');
+      await this.mail.send(
+        emprunt.user.email,
+        `Demande d'emprunt acceptée : ${emprunt.material.name}`,
+        `Bonjour ${emprunt.user.name},\n\nVotre demande d'emprunt pour "${emprunt.material.name}" a été acceptée.\nMerci de rendre le matériel avant le ${due}.\n\nTotally Sport!`,
+      );
+    } else {
+      await this.mail.send(
+        emprunt.user.email,
+        `Demande d'emprunt refusée : ${emprunt.material.name}`,
+        `Bonjour ${emprunt.user.name},\n\nVotre demande d'emprunt pour "${emprunt.material.name}" a été refusée.\n\nTotally Sport!`,
+      );
+    }
+
+    return updated;
+  }
+
+  @Cron(CronExpression.EVERY_DAY_AT_8AM)
+  async sendReturnReminders() {
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const todayEnd = new Date(todayStart);
+    todayEnd.setDate(todayEnd.getDate() + 1);
+
+    const dueToday = await this.prisma.client.emprunt.findMany({
+      where: {
+        status: 'APPROVED',
+        returnedAt: null,
+        endDate: { gte: todayStart, lt: todayEnd },
+      },
+      include: { user: true, material: true },
+    });
+
+    for (const e of dueToday) {
+      await this.mail.send(
+        e.user.email,
+        `Rappel : retour du matériel "${e.material.name}" aujourd'hui`,
+        `Bonjour ${e.user.name},\n\nLa date de retour pour "${e.material.name}" est aujourd'hui. Merci de le rapporter au BDS.\n\nTotally Sport!`,
+      );
+    }
   }
 
   async markReturned(id: string) {
