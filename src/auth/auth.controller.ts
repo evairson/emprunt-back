@@ -7,7 +7,13 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOkResponse, ApiQuery, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
 import { Request, Response } from 'express';
 
 import { JwtAuthGuard } from './jwt-auth.guard';
@@ -24,18 +30,23 @@ const cookieOptions = {
   maxAge: 60 * 60 * 1000,
 };
 
+/** Routes d'authentification : connexion Rezel, callback, profil, déconnexion. */
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get('login')
+  @ApiOperation({ summary: "Retourne l'URL d'autorisation Rezel" })
   @ApiOkResponse({ type: LoginUrlDto })
   async login(): Promise<LoginUrlDto> {
     return this.authService.getAuthorizationUrl();
   }
 
   @Get('callback')
+  @ApiOperation({
+    summary: 'Callback OAuth Rezel : pose le cookie JWT et redirige le front',
+  })
   @ApiQuery({ name: 'code', type: String })
   @ApiQuery({ name: 'state', type: String })
   async callback(
@@ -51,6 +62,7 @@ export class AuthController {
   }
 
   @Post('logout')
+  @ApiOperation({ summary: 'Supprime le cookie JWT' })
   logout(@Res({ passthrough: true }) res: Response) {
     res.clearCookie('token', { domain: cookieOptions.domain });
     return { ok: true };
@@ -59,6 +71,7 @@ export class AuthController {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @ApiOperation({ summary: "Infos de l'utilisateur courant (depuis la BDD)" })
   me(@Req() req: Request) {
     return this.authService.getMe(req['user'].sub as string);
   }

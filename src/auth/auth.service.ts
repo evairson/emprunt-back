@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { RezelService } from './rezel/rezel.service';
 
+/** Orchestre l'authentification : Rezel ↔ BDD ↔ JWT. */
 @Injectable()
 export class AuthService {
   constructor(

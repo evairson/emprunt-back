@@ -33,6 +33,7 @@ export interface RezelUserProfile {
   preferred_username: string;
 }
 
+/** Flow OAuth2 avec Rezel : URL d'autorisation, échange du code, profil. */
 @Injectable()
 export class RezelService {
   private readonly logger = new Logger(RezelService.name);

@@ -8,6 +8,7 @@ import {
 import { Request, Response } from 'express';
 import { Observable, tap } from 'rxjs';
 
+/** Interceptor global qui logue chaque requête HTTP (méthode, URL, status, durée). */
 @Injectable()
 export class LoggingInterceptor implements NestInterceptor {
   private readonly logger = new Logger('HTTP');

@@ -15,6 +15,7 @@ import {
   ApiBearerAuth,
   ApiBody,
   ApiConsumes,
+  ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
 
@@ -27,6 +28,7 @@ import {
   UpdateMaterialDto,
 } from './material.service';
 
+/** Routes du matériel + upload de photo. */
 @ApiTags('material')
 @Controller('material')
 export class MaterialController {
@@ -35,6 +37,7 @@ export class MaterialController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Liste tout le matériel' })
   findAll() {
     return this.materialService.findAll();
   }
@@ -42,6 +45,7 @@ export class MaterialController {
   @Get(':id')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Détail d\'un matériel' })
   findOne(@Param('id') id: string) {
     return this.materialService.findOne(id);
   }
@@ -49,6 +53,7 @@ export class MaterialController {
   @Post()
   @UseGuards(JwtAuthGuard, AdminGuard)
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Crée un matériel (admin)' })
   create(@Body() dto: CreateMaterialDto) {
     return this.materialService.create(dto);
   }
@@ -56,6 +61,7 @@ export class MaterialController {
   @Patch(':id')
   @UseGuards(JwtAuthGuard, AdminGuard)
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Modifie un matériel (admin)' })
   update(@Param('id') id: string, @Body() dto: UpdateMaterialDto) {
     return this.materialService.update(id, dto);
   }
@@ -63,6 +69,7 @@ export class MaterialController {
   @Delete(':id')
   @UseGuards(JwtAuthGuard, AdminGuard)
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Supprime un matériel (admin)' })
   remove(@Param('id') id: string) {
     return this.materialService.remove(id);
   }
@@ -70,6 +77,7 @@ export class MaterialController {
   @Post(':id/photo')
   @UseGuards(JwtAuthGuard, AdminGuard)
   @ApiBearerAuth()
+  @ApiOperation({ summary: 'Upload la photo d\'un matériel (admin)' })
   @ApiConsumes('multipart/form-data')
   @ApiBody({
     schema: {

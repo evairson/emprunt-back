@@ -14,6 +14,7 @@ export class CreateEmpruntDto {
   endDate!: string;
 }
 
+/** Emprunt : création, chevauchements, validation, retour, rappels mail. */
 @Injectable()
 export class EmpruntService {
   constructor(

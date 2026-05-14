@@ -9,6 +9,7 @@ export class FindOrCreateUserDto {
   name!: string;
 }
 
+/** Gestion des utilisateurs */
 @Injectable()
 export class UsersService {
   constructor(private readonly prisma: PrismaService) {}

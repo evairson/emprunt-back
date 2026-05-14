@@ -8,6 +8,7 @@ import type { Request } from 'express';
 
 import { PrismaService } from '../prisma/prisma.service';
 
+/** Guard qui vérifie en BDD que l'utilisateur courant a le rôle ADMIN. */
 @Injectable()
 export class AdminGuard implements CanActivate {
   constructor(private readonly prisma: PrismaService) {}

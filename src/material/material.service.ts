@@ -14,6 +14,7 @@ export class UpdateMaterialDto {
   photoUrl?: string;
 }
 
+/** Matériel + Photo uploadée. */
 @Injectable()
 export class MaterialService {
   constructor(private readonly prisma: PrismaService) {}
