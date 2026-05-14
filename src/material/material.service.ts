@@ -20,20 +20,24 @@ export class MaterialService {
   constructor(private readonly prisma: PrismaService) {}
 
   findAll() {
+    /* Liste tout le matériel */
     return this.prisma.client.material.findMany();
   }
 
   async findOne(id: string) {
+    /* Détail d'un matériel */
     const material = await this.prisma.client.material.findUnique({ where: { id } });
     if (!material) throw new NotFoundException('Material not found');
     return material;
   }
 
   create(dto: CreateMaterialDto) {
+    /* Crée un matériel */
     return this.prisma.client.material.create({ data: dto });
   }
 
   async update(id: string, dto: UpdateMaterialDto) {
+    /* Modifie un matériel */
     const material = await this.prisma.client.material.findUnique({ where: { id } });
     if (!material) throw new NotFoundException('Material not found');
 
@@ -41,6 +45,7 @@ export class MaterialService {
   }
 
   async remove(id: string) {
+    /* Supprime un matériel */
     const material = await this.prisma.client.material.findUnique({ where: { id } });
     if (!material) throw new NotFoundException('Material not found');
 
@@ -48,6 +53,7 @@ export class MaterialService {
   }
 
   async setPhoto(id: string, filename: string) {
+    /* Enregistre l'URL de la photo d'un matériel */
     const material = await this.prisma.client.material.findUnique({ where: { id } });
     if (!material) throw new NotFoundException('Material not found');
 

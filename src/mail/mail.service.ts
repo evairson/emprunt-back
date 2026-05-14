@@ -8,6 +8,7 @@ export class MailService implements OnModuleInit {
   private transporter: nodemailer.Transporter | null = null;
 
   onModuleInit() {
+    /* Initialise le transporter nodemailer */
     const { SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASSWORD } = process.env;
     if (!SMTP_HOST) {
       this.logger.warn('SMTP not configured — emails will be logged only');
@@ -21,6 +22,7 @@ export class MailService implements OnModuleInit {
   }
 
   async send(to: string, subject: string, text: string) {
+    /* Envoie un mail */
     const from = process.env.SMTP_FROM ?? 'emprunt@totally-sport.fr';
     if (!this.transporter) {
       this.logger.log(`[MAIL] to=${to} subject="${subject}"\n${text}`);

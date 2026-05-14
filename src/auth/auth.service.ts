@@ -14,14 +14,17 @@ export class AuthService {
   ) {}
 
   getMe(id: string) {
+    /* Récupère mes infos (pour la route /me) */
     return this.usersService.findById(id);
   }
 
   getAuthorizationUrl() {
+    /* Démarre le flow OAuth en redirigeant vers Rezel */
     return this.rezelService.getAuthorizationUrl();
   }
 
   async handleCallback(code: string, state: string) {
+    /* Gérer le callback OAuth */
     const accessToken = await this.rezelService.exchangeCode(code, state);
     const profile = await this.rezelService.getUserInfo(accessToken);
 

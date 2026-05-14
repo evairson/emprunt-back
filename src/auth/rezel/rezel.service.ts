@@ -44,6 +44,7 @@ export class RezelService {
   ) {}
 
   async getAuthorizationUrl(): Promise<{ url: string }> {
+    /* Génère une URL d'autorisation Rezel */
     const state = crypto.randomBytes(16).toString('hex');
     const scopes = ['openid', 'profile', 'email'].join(' ');
 
@@ -61,6 +62,7 @@ export class RezelService {
   }
 
   async exchangeCode(code: string, state: string): Promise<string> {
+    /* Échange le code d'autorisation contre un token d'accès */
     const valid = await (this.cacheManager as any).get(`state:${state}`);
 
     if (!valid) {
@@ -94,6 +96,7 @@ export class RezelService {
   }
 
   async getUserInfo(accessToken: string): Promise<RezelUserProfile> {
+    /* Récupère le profil de l'utilisateur depuis Rezel */
     try {
       const response = await this.httpService.axiosRef.get<RezelUserProfile>(
         env.REZEL_USERINFO_URL,

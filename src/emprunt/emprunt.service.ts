@@ -23,6 +23,7 @@ export class EmpruntService {
   ) {}
 
   async create(userId: string, dto: CreateEmpruntDto) {
+    /* Crée une demande d'emprunt */
     const start = new Date(dto.startDate);
     const end = new Date(dto.endDate);
     if (isNaN(start.getTime()) || isNaN(end.getTime()) || start >= end) {
@@ -56,6 +57,7 @@ export class EmpruntService {
   }
 
   getBlockedDates(materialId: string) {
+    /* Dates auxquelles le matériel est réservé */
     return this.prisma.client.emprunt.findMany({
       where: {
         materialId,
@@ -69,12 +71,14 @@ export class EmpruntService {
   }
 
   findAll() {
+    /* Toutes les demandes d'emprunt (admin) */
     return this.prisma.client.emprunt.findMany({
       include: { material: true, user: true },
     });
   }
 
   findMine(userId: string) {
+    /* Toutes mes demandes d'emprunt */
     return this.prisma.client.emprunt.findMany({
       where: { userId },
       include: { material: true },
@@ -82,6 +86,7 @@ export class EmpruntService {
   }
 
   async setStatus(id: string, status: 'APPROVED' | 'REJECTED') {
+    /* Approuve ou refuse une demande + envoie un mail à l'utilisateur */
     const emprunt = await this.prisma.client.emprunt.findUnique({
       where: { id },
       include: { user: true, material: true },
@@ -115,6 +120,8 @@ export class EmpruntService {
   }
 
   @Cron(CronExpression.EVERY_DAY_AT_8AM)
+  /* Rappel le jour du retour : tous les jours à 8h, 
+  envoie un mail aux emprunteurs dont la date de fin est le jour même et qui n'ont pas encore rendu le matériel. */
   async sendReturnReminders() {
     const todayStart = new Date();
     todayStart.setHours(0, 0, 0, 0);
@@ -140,6 +147,7 @@ export class EmpruntService {
   }
 
   async markReturned(id: string) {
+    /* Marque le matériel comme rendu */
     const emprunt = await this.prisma.client.emprunt.findUnique({ where: { id } });
     if (!emprunt) throw new NotFoundException('Emprunt not found');
     if (emprunt.status !== 'APPROVED') {
